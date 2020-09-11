@@ -7,7 +7,7 @@ Date:
 
 ## Abstract
 
-This vignette shows how to optimice the parameters of the Nichenet
+This vignette shows how to optimize the parameters of the NicheNet
 method, i.e. PageRank parameter and source weights, using sets of
 interactions availabe in the **Omnipath** database.
 
@@ -16,11 +16,11 @@ interactions availabe in the **Omnipath** database.
 **NicheNet** (<https://github.com/saeyslab/nichenetr>) is a method to
 predict ligand-target links between interacting cells by combining their
 data with prior knowledge on signaling and gene regulatory networks
-(Browaeys et al 2019). **NicheNet** has already been applied to predict
+(Browaeys et al. 2019). **NicheNet** has already been applied to predict
 upstream niche signals driving Kupffer cell differentiation (Bonnardel
 et al. 2019).
 
-**NicheNet** uses many different publically available resources to build
+**NicheNet** uses many different publicly available resources to build
 a prior knowledge network. Their final integrated network is composed of
 three individual networks:
 
@@ -31,12 +31,12 @@ three individual networks:
 The new version of the **Omnipath** (<http://omnipathdb.org/>) database
 contains curated interactions belonging to these three categories. One
 can therefore build an integrated network equivalent to the one used in
-**NicheNet** by only fetching the **Omnipath** webserver. This can
+**NicheNet** by only fetching from the **Omnipath** webserver. This can
 significantly ease the integration of different databases, each one of
-them storing data in distint formats and whose interaction show
+them storing data in distinct formats and whose interactions show
 different levels of reliability.
 
-We therefore here optimice the parameters used in the **NicheNet’s**
+We therefore here optimize the parameters used in the **NicheNet’s**
 algorithm, i.e. PageRank parameters and source weights, using
 interactions available in the **Omnipath** database.
 
@@ -82,7 +82,7 @@ interactionFormatTransf <- function(InputDf, InteractionType){
 
 ### Generating the Omnipath ligand-receptor network
 
-**Omnipath** possess a dedicated dataset storing these type of
+**Omnipath** possesses a dedicated dataset storing these types of
 interactions (*LigrecExtra*). Therefore, we get these interactions:
 
 ``` r
@@ -96,13 +96,13 @@ lr_Interactions_Omnipath <- import_ligrecextra_interactions() %>%
 
 In **NicheNet**, the authors predicted ligand–receptor interactions by
 searching in protein–protein interaction databases for interactions
-between genes annotated as ligands and receptors (Browaeys et al 2019).
+between genes annotated as ligands and receptors (Browaeys et al. 2019).
 
 We can also do something similar using **Omnipath**. The new version of
 **Omnipath** also contains protein annotations describing roles in
 inter-cellular signaling, e.g. if a protein is a ligand, a receptor, an
 extracellular matrix (ECM) component, etc… Thus, we selected proteins
-annotated as ligand or receptors and we searched for interactions
+annotated as ligand or receptor and we searched for interactions
 between them (with ligands as sources of interactions and receptors as
 sources). The process is described in the following code chunks:
 
@@ -115,7 +115,7 @@ Ligands_Receptors <- InterCell_Annotations %>%
     dplyr::filter(category %in% c("receptor","ligand"))
 
 ## There are also some complexes. We are going to deal with them by including
-## each of its individual proteins in our list
+## each of its individual protein in our list
 Ligand_Receptors_class <- character()
 Ligand_Receptors_name <- character()
 for (i in seq(nrow(Ligands_Receptors))){
@@ -145,7 +145,7 @@ AllReceptors_vec <-
     dplyr::filter(Ligand_Receptors_df, Class == "receptor") %>%
     dplyr::pull(GeneSymbol)
 
-## We next get protein-protein interactions from the different datasets availabe
+## We next get protein-protein interactions from the different datasets available
 ## in Omnipath
 AllInteractions <- 
     import_post_translational_interactions(exclude = "ligrecextra") %>% 
@@ -161,7 +161,7 @@ Matching_Interactions_Annotations <- AllInteractions %>%
     dplyr::distinct()
 ```
 
-We now combine these two soruces of ligand receptor interactions and
+We now combine these two sources of ligand-receptor interactions and
 then transform to the network format required by the **NicheNet**
 method:
 
@@ -198,12 +198,12 @@ saveRDS(lr_Network_Omnipath,
         "OmniNetworks_NNformat/lr_Network_Omnipath.rds")
 ```
 
-### Generating the Omnipath signalling network
+### Generating the Omnipath signaling network
 
 We generate a signaling network using **Omnipath** resources. In
 **Omnipath**, we can find different datasets describing protein
 interactions (<https://github.com/saezlab/pypath>). We will merge these
-datasts to generate a signaling network.
+datasets to generate a signaling network.
 
 ``` r
 ## Original Omnipath interactions
@@ -245,7 +245,7 @@ saveRDS(sig_Network_Omnipath,
 
 ### Generating the Omnipath gene regulatory network
 
-In this section, we generate a GRN network using the **DoRothEA**
+In this section, we generate a GRN using the **DoRothEA**
 regulons which are available through **Omnipath**:
 
 ``` r
@@ -272,8 +272,8 @@ saveRDS(gr_Network_Omnipath,
 
 ## Parameter optimization via mlrMBO
 
-We are going to optimice Nichenet method, i.e. PageRank parameters and
-source weights, basedon a collection of experiments where the effect of
+We are going to optimize the NicheNet method, i.e. PageRank parameters and
+source weights, based on a collection of experiments where the effect of
 a ligand on gene expression was measured. We have to remove the
 experiments involving the ligand IFNA1 because it is not present in our
 network.
@@ -288,9 +288,9 @@ index <- which(!unlist(lapply(expression_settings_validation,
 expression_settings_validation <- expression_settings_validation[-index]
 ```
 
-Running the optimisation can take quite long depending on the number of
+Running the optimization can take quite long depending on the number of
 interactions in the network, the number of iterations of the
-optimisation process and the number cores of your machine). We finally
+optimization process and the number cores of your machine). We finally
 save the results that would be used in the forthcoming scripts.
 
 ``` r
